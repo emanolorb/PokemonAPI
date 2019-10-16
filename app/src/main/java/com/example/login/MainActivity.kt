@@ -1,7 +1,7 @@
 package com.example.login
 
-import android.app.DownloadManager
-import android.content.Intent
+import PokemonObjectClass
+import Types
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -14,7 +14,10 @@ import com.android.volley.Request
 import com.android.volley.Response
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
+import com.google.gson.Gson
+import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_main.*
+
 
 class MainActivity : AppCompatActivity(){
 
@@ -24,8 +27,13 @@ class MainActivity : AppCompatActivity(){
         val btnSearch = findViewById<Button>(R.id.btnSearch)
         btnSearch.setOnClickListener(View.OnClickListener {
             if (Network.checkRed(this)){
-                Toast.makeText(this, "Hay red", Toast.LENGTH_SHORT).show()
-                getPoke("1")
+                val etSearch = findViewById<EditText>(R.id.etPokemon)
+                var searchPokemon:String = etSearch.text.toString()
+                if (searchPokemon.isNotEmpty()){
+                    getPoke(searchPokemon)
+                }else {
+                    Toast.makeText(this, "Inserta un pokemon a Buscar", Toast.LENGTH_SHORT).show()
+                }
             } else {
                 Toast.makeText(this, "No hay conexion a internet", Toast.LENGTH_SHORT).show()
             }
@@ -38,28 +46,54 @@ class MainActivity : AppCompatActivity(){
 
 //    get method volly
     private fun getPoke(url:String){
-    val textView = findViewById<TextView>(R.id.textView2)
-// ...
 
-// Instantiate the RequestQueue.
-    val queue = Volley.newRequestQueue(this)
-    val urlFinal = "https://pokeapi.co/api/v2/pokemon/$url/"
+        val tvName = findViewById<TextView>(R.id.tvName)
+        val tvNumber = findViewById<TextView>(R.id.tvNumber)
+        val tvType = findViewById<TextView>(R.id.etType)
+        // ...
 
-// Request a string response from the provided URL.
-    val stringRequest = StringRequest(Request.Method.GET, urlFinal,
-        Response.Listener<String> { response ->
-            // Display the first 500 characters of the response string.
-            try {
-                textView.text = "Response is: ${response.substring(0, 500)}"
-            }catch (e: Exception){
-                Log.d("request", e.toString())
-            }
+        // Instantiate the RequestQueue.
+        val queue = Volley.newRequestQueue(this)
+        val urlFinal = "https://pokeapi.co/api/v2/pokemon/$url/"
 
-        },
-        Response.ErrorListener { textView.text = "That didn't work!" })
+        // Request a string response from the provided URL.
+        val stringRequest = StringRequest(Request.Method.GET, urlFinal,
+            Response.Listener<String> { response ->
 
-// Add the request to the RequestQueue.
-    queue.add(stringRequest)
+
+                 //  Print info in Activity
+                val pokeInfo = Gson().fromJson(response.toString(), PokemonObjectClass::class.java)
+                try {
+                    var typesString:String = ""
+                    for (i in 0..pokeInfo.types.size-1){
+                        var rowTipe:Types = pokeInfo.types.get(i)
+                        Log.d("test", rowTipe.type.name)
+                        if (i == 0){
+                            typesString = "${rowTipe.type.name}"
+                        }else{
+                            typesString = "$typesString-${rowTipe.type.name}"
+                        }
+
+                    }
+//                    ivPokeMale
+                    Picasso.get().load("https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/back/1.png").into(ivPokeMale)
+//                    Glide.with(this).load("https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/back/1.png").into(ivPokeMale)
+                    tvName.text = "Nombre: ${pokeInfo.name}"
+                    tvNumber.text = "Numero: ${pokeInfo.id}"
+                    tvType.text = "Tipo: $typesString"
+                }catch (e: Exception){
+                    Log.d("request", e.toString())
+                }
+
+            },
+            Response.ErrorListener {
+                tvName.text = "No se encontro ese pokemon"
+                tvNumber.text = ""
+                tvType.text = ""
+            })
+
+        // Add the request to the RequestQueue.
+        queue.add(stringRequest)
 
     }
 }
