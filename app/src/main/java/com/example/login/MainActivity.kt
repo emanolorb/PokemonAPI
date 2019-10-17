@@ -2,9 +2,13 @@ package com.example.login
 
 import PokemonObjectClass
 import Types
+import android.app.Activity
+import android.content.Context
+import android.graphics.Rect
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.util.TypedValue
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
@@ -76,8 +80,10 @@ class MainActivity : AppCompatActivity(){
 
                     }
 //                    ivPokeMale
-                    Picasso.get().load("https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/back/1.png").into(ivPokeMale)
-//                    Glide.with(this).load("https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/back/1.png").into(ivPokeMale)
+                    Picasso.get().load(pokeInfo.sprites.front_default).into(ivPokeMale)
+                    Picasso.get().load(pokeInfo.sprites.front_female).into(ivPokeFemale)
+                    Picasso.get().load(pokeInfo.sprites.front_shiny).into(ivPokeMaleShiny)
+                    Picasso.get().load(pokeInfo.sprites.front_shiny_female).into(ivPokeFemaleShiny)
                     tvName.text = "Nombre: ${pokeInfo.name}"
                     tvNumber.text = "Numero: ${pokeInfo.id}"
                     tvType.text = "Tipo: $typesString"
