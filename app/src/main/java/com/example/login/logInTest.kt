@@ -24,8 +24,7 @@ class logInTest : AppCompatActivity() {
         btnLogin.setOnClickListener(View.OnClickListener {
             var passVar:String = etPass.text.toString()
             var emailVar:String = etmail.text.toString()
-            if (true){
-                Toast.makeText(this,"pass: $passVar , user: $emailVar", Toast.LENGTH_LONG).show()
+            if (passVar == "rules" && emailVar == "pokemon"){
                 val intent = Intent(applicationContext,MainActivity::class.java)
                 startActivity(intent)
             } else {

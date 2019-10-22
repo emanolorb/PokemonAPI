@@ -9,7 +9,9 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.util.TypedValue
+import android.view.KeyEvent
 import android.view.View
+import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
@@ -21,6 +23,12 @@ import com.android.volley.toolbox.Volley
 import com.google.gson.Gson
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_main.*
+import androidx.core.app.ComponentActivity
+import androidx.core.app.ComponentActivity.ExtraData
+import androidx.core.content.ContextCompat.getSystemService
+import android.icu.lang.UCharacter.GraphemeClusterBreak.T
+
+
 
 
 class MainActivity : AppCompatActivity(){
@@ -28,13 +36,18 @@ class MainActivity : AppCompatActivity(){
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        supportActionBar?.hide()
+
         val btnSearch = findViewById<Button>(R.id.btnSearch)
+
         btnSearch.setOnClickListener(View.OnClickListener {
             if (Network.checkRed(this)){
                 val etSearch = findViewById<EditText>(R.id.etPokemon)
                 var searchPokemon:String = etSearch.text.toString()
                 if (searchPokemon.isNotEmpty()){
                     getPoke(searchPokemon)
+                    closeKeyboard()
                 }else {
                     Toast.makeText(this, "Inserta un pokemon a Buscar", Toast.LENGTH_SHORT).show()
                 }
@@ -43,7 +56,21 @@ class MainActivity : AppCompatActivity(){
             }
 
         })
-
+        etPokemon.setOnKeyListener(View.OnKeyListener { v, keyCode, event ->
+            if (keyCode == KeyEvent.KEYCODE_ENTER && event.action == KeyEvent.ACTION_UP) {
+                // se cierra el keyboard
+                try {
+                    val editTextInput =
+                        getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                    editTextInput.hideSoftInputFromWindow(currentFocus!!.windowToken, 0)
+                } catch (e: Exception) {
+                    Log.e("AndroidView", "closeKeyboard: $e")
+                }
+                //Perform Code
+                return@OnKeyListener true
+            }
+            false
+        })
 
 
     }
@@ -101,5 +128,15 @@ class MainActivity : AppCompatActivity(){
         // Add the request to the RequestQueue.
         queue.add(stringRequest)
 
+    }
+
+    fun closeKeyboard(){
+        try {
+            val editTextInput =
+                getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            editTextInput.hideSoftInputFromWindow(currentFocus!!.windowToken, 0)
+        } catch (e: Exception) {
+            Log.e("AndroidView", "closeKeyboard: $e")
+        }
     }
 }

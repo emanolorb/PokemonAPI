@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/ic_huevito"
+    android:background="@drawable/city"
     tools:context=".logInTest">
 
     <androidx.constraintlayout.widget.Guideline
@@ -43,6 +43,8 @@
         android:ems="10"
         android:hint="email"
         android:inputType="textEmailAddress"
+        android:textColor="@android:color/background_light"
+        android:textColorHint="@android:color/background_light"
         app:layout_constraintBottom_toTopOf="@+id/etPass"
         app:layout_constraintEnd_toStartOf="@+id/guideline3"
         app:layout_constraintHorizontal_bias="0.5"
@@ -70,6 +72,8 @@
         android:ems="10"
         android:hint="pass"
         android:inputType="textPassword"
+        android:textColor="@android:color/background_light"
+        android:textColorHint="@android:color/background_light"
         app:layout_constraintBottom_toTopOf="@+id/btnLoginSubmit"
         app:layout_constraintEnd_toStartOf="@+id/guideline3"
         app:layout_constraintHorizontal_bias="0.5"
